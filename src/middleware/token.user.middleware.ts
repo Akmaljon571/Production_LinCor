@@ -40,21 +40,26 @@ export class TokenUserMiddleWare implements NestMiddleware {
         },
       },
     });
+   
 
     findBuyCourse.map(async (e) => {
-      const endDate = completionDate(e.create_data, 6);
-      const realTimeCreate = new Date();
-      const realTime = completionDate(realTimeCreate, 0);
-      const endDays = convertorDateToDay(endDate);
-      const realDays = convertorDateToDay(realTime);
 
-      if (realDays > endDays) {
-        await TakeEntity.createQueryBuilder()
-          .update(TakeEntity)
-          .set({ active: false })
-          .where({ id: e.id })
-          .execute();
-      }
+      if(e.active){
+        const endDate = completionDate(e.create_data, 6);
+        const realTimeCreate = new Date();
+        const realTime = completionDate(realTimeCreate, 0);
+        const endDays = convertorDateToDay(endDate);
+        const realDays = convertorDateToDay(realTime);
+  
+        if (realDays > endDays) {
+          await TakeEntity.createQueryBuilder()
+            .update(TakeEntity)
+            .set({ active: false })
+            .where({ id: e.id })
+            .execute();
+        }
+      } 
+    
     });
     req.user_id = user.id;
     next();
